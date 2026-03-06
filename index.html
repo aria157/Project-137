@@ -73,12 +73,7 @@
     margin-bottom: 8px;
   }
 
-  .subtitle {
-    font-size: 11px;
-    color: var(--neutral);
-    letter-spacing: 4px;
-    margin-bottom: 15px;
-  }
+  .subtitle { font-size: 11px; color: var(--neutral); letter-spacing: 4px; margin-bottom: 15px; }
 
   .status-bar {
     display: flex;
@@ -132,14 +127,24 @@
   .delta-neutral { color: #ffaa00; }
   .delta-sub { font-size: 9px; color: var(--dim); margin-top: 4px; }
 
-  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; font-size: 9px; letter-spacing: 2px; color: var(--dim); }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-swatch { width: 20px; height: 8px; }
+  /* ANOMALY LEDGER / TERMINAL */
+  .ledger-panel { grid-column: 1 / -1; background: #000; border: 1px solid var(--dim); padding: 20px; font-family: 'Share Tech Mono', monospace; }
+  .ledger-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--dim); padding-bottom: 10px; margin-bottom: 15px; }
+  .ledger-title { color: var(--schumann); font-size: 12px; letter-spacing: 3px; }
+  .ledger-content { height: 150px; overflow-y: auto; font-size: 10px; line-height: 1.6; color: var(--neutral); scrollbar-width: none; }
+  .ledger-content::-webkit-scrollbar { display: none; }
+  .log-entry { margin-bottom: 4px; }
+  .log-ts { color: var(--dim); margin-right: 10px; }
+  .log-msg-critical { color: var(--synthetic); font-weight: bold; }
+  .log-msg-success { color: var(--schumann); }
 
-  .watermark { position: fixed; bottom: 20px; right: 20px; font-family: 'Orbitron', monospace; font-size: 9px; color: rgba(0,255,136,0.15); letter-spacing: 3px; z-index: 10; }
-  
-  .tooltip { position: fixed; background: rgba(0,0,0,0.95); border: 1px solid var(--schumann); padding: 10px 14px; font-size: 10px; letter-spacing: 1px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 100; max-width: 240px; line-height: 1.8; }
-  
+  .scan-btn {
+    background: transparent; border: 1px solid var(--schumann); color: var(--schumann); padding: 8px 16px;
+    font-family: 'Orbitron', monospace; font-size: 10px; cursor: pointer; transition: all 0.3s;
+  }
+  .scan-btn:hover { background: var(--schumann); color: var(--void); box-shadow: var(--glow-green); }
+
+  .tooltip { position: fixed; background: rgba(0,0,0,0.95); border: 1px solid var(--schumann); padding: 10px 14px; font-size: 10px; letter-spacing: 1px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 100; max-width: 240px; }
   .scan-line { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.3), transparent); animation: scan 8s linear infinite; pointer-events: none; z-index: 5; }
   @keyframes scan { 0% { top: 0; } 100% { top: 100vh; } }
 </style>
@@ -153,17 +158,14 @@
   <header>
     <div class="logo">OPERATOR: ARIAONE | NODE: CARRUM DOWNS VIC | CHAIN: ARIAONE.BASE.ETH</div>
     <h1>PROJECT 137</h1>
-    <div class="subtitle">THE SHADOW LEDGER — GLOBAL GRID AUDIT DASHBOARD v1.0</div>
-    <div style="font-size: 10px; color: var(--schumann); margin-top: 10px; letter-spacing: 2px;">
-      ● LIVE | DREAM TEAM 137
-    </div>
+    <div class="subtitle">THE SHADOW LEDGER — GLOBAL GRID AUDIT DASHBOARD v1.1</div>
   </header>
 
   <div class="status-bar">
     <div class="status-item"><div class="status-dot dot-green"></div>CARRUM DOWNS — SIGNAL OPEN</div>
     <div class="status-item"><div class="status-dot dot-red"></div>SYDNEY CBD — 78% MUTED</div>
     <div class="status-item"><div class="status-dot dot-amber"></div>SCHUMANN BASE: 7.83 Hz</div>
-    <div class="status-item"><div class="status-dot dot-green"></div>ANOMALY LEDGER: INITIALIZING...</div>
+    <div class="status-item"><button class="scan-btn" onclick="initDeepScan()">INITIATE DEEP SCAN</button></div>
   </div>
 
   <div class="grid">
@@ -171,108 +173,110 @@
       <div class="panel-title">📡 Carrum Downs — Open Signal</div>
       <div class="panel-coords">38°05'S 145°07'E | SOUTHEAST BASALT PLAIN | KARRUM KARRUM VOID</div>
       <div class="heatmap-container" id="carrum-chart"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:var(--schumann)"></div>NATURAL RESONANCE</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#004422"></div>BASALT CHAMBER SIGNAL</div>
-      </div>
     </div>
 
     <div class="panel panel-muted">
       <div class="panel-title">🔇 Sydney CBD — Muted Signal</div>
-      <div class="panel-coords">33°51'55"S 151°12'33"E | HUNTER STREET | POST-TBM JESSIE/RUBY</div>
+      <div class="panel-coords">33°51'55"S 151°12'33"E | HUNTER STREET | TBM SECTOR</div>
       <div class="heatmap-container" id="sydney-chart"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:var(--synthetic)"></div>SYNTHETIC OVERRIDE</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#330800"></div>SUPPRESSED BAND</div>
-      </div>
     </div>
 
     <div class="comparison-panel">
-      <div class="panel-title">⚡ Acoustic Delta — Frequency Differential Map</div>
-      <div class="panel-coords">GREEN = CARRUM DOMINANT (NATURAL) | RED = SYDNEY DOMINANT (SYNTHETIC)</div>
-      <div id="delta-heatmap" style="width:100%; height:120px; margin-top:15px; overflow-x: auto;"></div>
+      <div class="panel-title">⚡ Acoustic Delta — Frequency Differential</div>
+      <div id="delta-heatmap" style="width:100%; height:100px; margin-top:15px;"></div>
       <div class="delta-grid" id="delta-cards"></div>
+    </div>
+
+    <div class="ledger-panel">
+      <div class="ledger-header">
+        <div class="ledger-title">SYSTEM LOG // ANOMALY LEDGER</div>
+        <div id="ledger-status" style="font-size:9px; color:var(--dim);">IDLE</div>
+      </div>
+      <div class="ledger-content" id="ledger-content">
+        <div class="log-entry"><span class="log-ts">[22:52:01]</span> Node Carrum Downs initialized. Operator AriaOne authenticated.</div>
+        <div class="log-entry"><span class="log-ts">[22:52:05]</span> Basalt harmonic detected at 4.2 Hz. Matching site signature.</div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="watermark">PROJECT 137 — SHADOW LEDGER v1.0 | ARIAONE</div>
-
 <script>
 const SCHUMANN = 7.83;
-const FREQS = Array.from({length: 38}, (_, i) => parseFloat((1 + i * 0.5).toFixed(1)));
+const FREQS = Array.from({length: 40}, (_, i) => parseFloat((0.5 + i * 0.5).toFixed(1)));
 
 function carrumSignal(f) {
   const schumann_peak = 2.8 * Math.exp(-Math.pow(f - 7.83, 2) / 0.3);
   const basalt_harmonic_1 = 1.4 * Math.exp(-Math.pow(f - 4.2, 2) / 0.5);
-  const basalt_harmonic_3 = 0.6 * Math.exp(-Math.pow(f - 5.8, 2) / 0.3);
-  return Math.max(0, schumann_peak + basalt_harmonic_1 + basalt_harmonic_3 + 0.05 * Math.random());
+  // 137 leakage simulation
+  const leakage = (f === 13.5 || f === 14.0) ? 0.8 : 0;
+  return Math.max(0, schumann_peak + basalt_harmonic_1 + leakage + 0.05 * Math.random());
 }
 
 function sydneySignal(f) {
   const schumann_suppressed = 0.6 * Math.exp(-Math.pow(f - 7.83, 2) / 0.3);
   const synthetic_hum = 1.9 * Math.exp(-Math.pow(f - 10.5, 2) / 0.8);
-  const tunnel_harmonic = 1.1 * Math.exp(-Math.pow(f - 3.2, 2) / 0.4);
-  return Math.max(0, schumann_suppressed + synthetic_hum + tunnel_harmonic + 0.08 * Math.random());
+  return Math.max(0, schumann_suppressed + synthetic_hum + 0.08 * Math.random());
 }
 
 const carrumData = FREQS.map(f => ({ f, amp: carrumSignal(f) }));
 const sydneyData = FREQS.map(f => ({ f, amp: sydneySignal(f) }));
-const deltaData = FREQS.map((f, i) => ({ f, delta: carrumData[i].amp - sydneyData[i].amp, carrum: carrumData[i].amp, sydney: sydneyData[i].amp }));
+const deltaData = FREQS.map((f, i) => ({ f, delta: carrumData[i].amp - sydneyData[i].amp }));
 
 const tooltip = document.getElementById('tooltip');
 
-function renderFreqChart(containerId, data, colorFn, label) {
+function renderFreqChart(containerId, data, color) {
   const container = document.getElementById(containerId);
-  const W = container.clientWidth || 500, H = 220;
-  const margin = { top: 20, right: 20, bottom: 40, left: 45 }, w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
-  const maxAmp = Math.max(...data.map(d => d.amp)) * 1.1;
-  const xScale = f => ((f - 1) / (20 - 1)) * w, yScale = a => h - (a / maxAmp) * h;
-  
+  const W = container.clientWidth, H = 200;
+  const margin = { top: 10, right: 10, bottom: 30, left: 40 }, w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
+  const maxAmp = 3.5;
+  const xScale = d3.scaleLinear().domain([0, 20]).range([0, w]), yScale = d3.scaleLinear().domain([0, maxAmp]).range([h, 0]);
+
   const svg = d3.select(`#${containerId}`).append("svg").attr("viewBox", `0 0 ${W} ${H}`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
   
-  svg.selectAll(".bar").data(data).enter().append("rect").attr("class", "freq-bar")
-    .attr("x", d => xScale(d.f) - (w/data.length*0.7)/2).attr("y", d => yScale(d.amp)).attr("width", w/data.length*0.7).attr("height", d => h - yScale(d.amp))
-    .attr("fill", colorFn).attr("opacity", 0.8)
+  svg.selectAll(".bar").data(data.filter(d => d.f <= 20)).enter().append("rect")
+    .attr("x", d => xScale(d.f) - (w/40*0.7)/2).attr("y", d => yScale(d.amp)).attr("width", w/40*0.7).attr("height", d => h - yScale(d.amp))
+    .attr("fill", color).attr("opacity", 0.7)
     .on("mouseenter", (e, d) => {
-      tooltip.style.opacity = 1;
-      tooltip.innerHTML = `FREQ: ${d.f}Hz<br>AMP: ${d.amp.toFixed(3)}`;
+      tooltip.style.opacity = 1; tooltip.innerHTML = `FREQ: ${d.f}Hz<br>AMP: ${d.amp.toFixed(3)}`;
       tooltip.style.left = (e.clientX+15)+"px"; tooltip.style.top = (e.clientY-10)+"px";
     }).on("mouseleave", () => tooltip.style.opacity = 0);
-
-  svg.append("line").attr("x1", xScale(SCHUMANN)).attr("x2", xScale(SCHUMANN)).attr("y1", 0).attr("y2", h).attr("stroke", "#00ff88").attr("stroke-dasharray", "4,3").attr("opacity", 0.5);
 }
 
-function renderDeltaHeatmap(containerId, data) {
-  const container = document.getElementById(containerId);
-  const W = container.clientWidth || 900, H = 100;
-  const margin = { top: 10, right: 10, bottom: 30, left: 10 }, w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
-  const cellW = w / data.length;
-  
-  const svg = d3.select(`#${containerId}`).append("svg").attr("viewBox", `0 0 ${W} ${H}`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+function addLog(msg, type = '') {
+  const content = document.getElementById('ledger-content');
+  const div = document.createElement('div');
+  div.className = `log-entry ${type}`;
+  div.innerHTML = `<span class="log-ts">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+  content.prepend(div);
+}
 
-  svg.selectAll("rect").data(data).enter().append("rect").attr("x", (d,i) => i*cellW).attr("y", 0).attr("width", cellW-1).attr("height", h)
-    .attr("fill", d => d.delta > 0.1 ? `rgba(0,255,136,${Math.min(1, d.delta)})` : (d.delta < -0.1 ? `rgba(255,60,0,${Math.min(1, Math.abs(d.delta))})` : "rgba(74,124,111,0.2)"))
-    .on("mouseenter", (e, d) => {
-      tooltip.style.opacity = 1; tooltip.innerHTML = `FREQ: ${d.f}Hz<br>DELTA: ${d.delta.toFixed(3)}`;
-      tooltip.style.left = (e.clientX+15)+"px"; tooltip.style.top = (e.clientY-10)+"px";
-    }).on("mouseleave", () => tooltip.style.opacity = 0);
+function initDeepScan() {
+  document.getElementById('ledger-status').innerText = 'SCANNING...';
+  addLog("Initializing Deep Scan: Frequency range $1.0$ Hz - $20.0$ Hz...", "log-msg-success");
+  
+  setTimeout(() => {
+    addLog("Searching for 137-leakage harmonics at $1.37$ Hz and $13.7$ Hz...", "");
+  }, 1000);
+
+  setTimeout(() => {
+    addLog("ALERT: Sub-harmonic detected at $13.7$ Hz in Carrum Downs sector.", "log-msg-critical");
+    addLog("Signal strength: $0.842$ relative amplitude. Source: Karrum Karrum Void.", "log-msg-critical");
+    document.getElementById('ledger-status').innerText = 'ANOMALY DETECTED';
+  }, 3000);
 }
 
 function init() {
-  renderFreqChart('carrum-chart', carrumData, "#00ff88", 'CARRUM DOWNS');
-  renderFreqChart('sydney-chart', sydneyData, "#ff3c00", 'SYDNEY CBD');
-  renderDeltaHeatmap('delta-heatmap', deltaData);
+  renderFreqChart('carrum-chart', carrumData, "#00ff88");
+  renderFreqChart('sydney-chart', sydneyData, "#ff3c00");
   
   const dCards = [
-    { label: "SCHUMANN MUTING", value: "78%", cls: "delta-negative", sub: "Sydney CBD Suppression" },
-    { label: "BASALT HARMONIC", value: "4.2 Hz", cls: "delta-positive", sub: "Carrum Downs Peak" },
-    { label: "SYNTHETIC HUM", value: "10.5 Hz", cls: "delta-negative", sub: "Tunnel Resonance" },
-    { label: "GRID STATUS", value: "AUDIT ACTIVE", cls: "delta-neutral", sub: "Node: Carrum Downs" }
+    { label: "SCHUMANN MUTING", value: "78%", cls: "delta-negative" },
+    { label: "BASALT HARMONIC", value: "4.2 Hz", cls: "delta-positive" },
+    { label: "137 LEAKAGE", value: "DETECTED", cls: "delta-negative" },
+    { label: "VOID STATUS", value: "OPEN", cls: "delta-positive" }
   ];
-  
   d3.select("#delta-cards").selectAll(".delta-card").data(dCards).enter().append("div").attr("class", "delta-card")
-    .html(d => `<div class="delta-label">${d.label}</div><div class="delta-value ${d.cls}">${d.value}</div><div class="delta-sub">${d.sub}</div>`);
+    .html(d => `<div class="delta-label">${d.label}</div><div class="delta-value ${d.cls}">${d.value}</div>`);
 }
 
 window.addEventListener('load', init);
