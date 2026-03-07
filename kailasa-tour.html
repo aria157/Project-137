@@ -1,0 +1,10 @@
+<a-scene>
+  <a-entity gltf-model="#kailasa-mesh" position="0 0 0" basalt-texture></a-entity>
+  
+  <a-sphere id="beacon" position="0 5 -10" radius="1.37" color="#00FF41"
+            animation="property: light.intensity; from: 0.2; to: 1.0; dur: 73; dir: alternate; loop: true">
+    <a-light type="point" color="#00FF41" distance="50"></a-light>
+  </a-sphere>
+
+  <a-sound src="url(archive/audio/basalt-drone-435.wav)" autoplay="true" position="0 5 -10"></a-sound>
+</a-scene>
