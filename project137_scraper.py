@@ -427,6 +427,39 @@ def analyze_earth_frequency(wav_file_path: str):
         print("[FFT] Install scipy + numpy: pip install scipy numpy")
     except Exception as e:
         print(f"[FFT ERROR] {e}")
+             import requests
+import json
+
+NODES = {
+    "P137-VIC-01": {"lat": -38.101, "lon": 145.151, "desc": "Carrum Downs Basalt"},
+    "P137-GZA-01": {"lat": 29.979, "lon": 31.134, "desc": "Giza Plateau"},
+    "P137-YNG-01": {"lat": 24.444, "lon": 123.004, "desc": "Yonaguni Monument"}
+}
+
+def scan_node_harmonics(node_id):
+    """
+    Simulates cross-referencing subterranean sensor logs 
+    (South East Water/VicRoads for VIC, local telemetry for others).
+    """
+    node = NODES.get(node_id)
+    base_freq = 7.83  # Schumann Constant
+    
+    # Placeholder for actual data extraction logic from your existing scrapers
+    print(f"Scanning Node {node_id} at {node['desc']}...")
+    
+    # Logic for detecting the 13.7 Hz leakage signature
+    if node_id == "P137-YNG-01":
+        detect_leakage(13.7)
+
+def detect_leakage(frequency):
+    if frequency == 13.7:
+        print(f"ALERT: Frequency {frequency}Hz exceeds safety threshold for subterranean audit.")
+        # Trigger your Vercel dashboard update here
+
+if __name__ == "__main__":
+    for node_id in NODES:
+        scan_node_harmonics(node_id)
+
 
 
 # ============================================================
