@@ -1,0 +1,28 @@
+{
+  "network": "Project-137-Gossip-Mesh",
+  "version": "1.1.0",
+  "operator_identity": "ariaone.base.eth",
+  "active_peers": [
+    {
+      "node_id": "P137-VIC-01",
+      "location": "Carrum Downs, AU",
+      "status": "OPEN",
+      "base_freq": 7.83,
+      "harmonic": 4.2
+    },
+    {
+      "node_id": "P137-GZA-01",
+      "location": "Giza, Egypt",
+      "status": "MONITORING",
+      "base_freq": 7.83,
+      "harmonic": 33.0
+    },
+    {
+      "node_id": "P137-YNG-01",
+      "location": "Yonaguni, Japan",
+      "status": "LEAKAGE_DETECTED",
+      "base_freq": 7.83,
+      "harmonic": 13.7
+    }
+  ]
+}
